@@ -3,15 +3,12 @@ from stable_baselines3 import PPO
 from pathlib import Path
 import time
 
-# -------- CHEMINS --------
 MODEL_PATH = "models/ppo_humanoid_final"
 BEST_MODEL_PATH = MODEL_PATH + "_best/best_model.zip"
 STANDARD_MODEL_PATH = MODEL_PATH + ".zip"
 
-# -------- ENVIRONNEMENT --------
 env = gym.make("Humanoid-v5", render_mode="human")
 
-# -------- CHARGEMENT DU MODÈLE --------
 if Path(BEST_MODEL_PATH).exists():
     print("🔁 Chargement du meilleur modèle entraîné...")
     model = PPO.load(BEST_MODEL_PATH)
@@ -21,8 +18,7 @@ elif Path(STANDARD_MODEL_PATH).exists():
 else:
     raise FileNotFoundError("❌ Aucun modèle trouvé. Entraîne d'abord un modèle avec train.py")
 
-# -------- ÉVALUATION --------
-n_episodes = 10  # nombre d'épisodes à jouer
+n_episodes = 10
 
 for episode in range(n_episodes):
     obs, _ = env.reset()
@@ -39,7 +35,7 @@ for episode in range(n_episodes):
         total_reward += reward
         step += 1
 
-        time.sleep(1 / 60)  # pour que le rendu reste fluide (~60 fps)
+        time.sleep(1 / 60)
 
     print(f"✅ Épisode terminé en {step} étapes | Récompense totale : {total_reward:.2f}")
 

@@ -10,8 +10,8 @@ from pathlib import Path
 import os
 
 ENV_ID = "Humanoid-v5"
-TOTAL_TIMESTEPS = 200_000  # ✏️ Tu peux monter ça si tu veux plus de précision
-N_TRIALS = 20              # ✏️ Nombre d'essais à tester (plus = plus long)
+TOTAL_TIMESTEPS = 200_000
+N_TRIALS = 20
 LOG_DIR = "./optuna_logs/"
 BEST_MODEL_DIR = "./optuna_best_model/"
 
@@ -19,7 +19,6 @@ os.makedirs(LOG_DIR, exist_ok=True)
 os.makedirs(BEST_MODEL_DIR, exist_ok=True)
 
 def optimize_ppo(trial):
-    # 📈 Hyperparams à tester
     learning_rate = trial.suggest_loguniform("learning_rate", 1e-5, 3e-4)
     gamma = trial.suggest_uniform("gamma", 0.95, 0.9999)
     gae_lambda = trial.suggest_uniform("gae_lambda", 0.8, 0.99)
@@ -29,7 +28,6 @@ def optimize_ppo(trial):
     n_steps = trial.suggest_int("n_steps", 1024, 4096, step=512)
     batch_size = trial.suggest_categorical("batch_size", [2048, 4096, 8192, 16384])
 
-    # ⚠️ n_steps doit être >= batch_size
     if batch_size > n_steps:
         raise optuna.exceptions.TrialPruned()
 
@@ -74,7 +72,6 @@ if __name__ == "__main__":
     print("✅ Meilleurs hyperparamètres :")
     print(study.best_params)
 
-    # Optionnel : sauvegarde de l’étude
     study_path = Path(LOG_DIR) / "optuna_study.pkl"
     with open(study_path, "wb") as f:
         import pickle
